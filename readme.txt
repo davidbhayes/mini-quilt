@@ -41,6 +41,11 @@ A Mini Bar is essentially the same as a Mini Quilt--a visually interesting way t
 3. A single simple quilt on the new Twenty Eleven default theme.
 
 == Changelog ==
+
+=0.8.1=
+* Bump to change ownership.
+* Very minor changes to formatting to better match WordPress style.
+
 = 0.8.0 =
 * Made it possible to show post titles, so they can be determined without hovering
 * Added option to randomize quilt
@@ -53,11 +58,6 @@ A Mini Bar is essentially the same as a Mini Quilt--a visually interesting way t
 * Allow colored tiles to represent dates in an array of many such tiles
 
 == Upgrade Notice ==
-
-=0.8.1=
-* Bump to change ownership.
-* Very minor changes to formatting to better match WordPress style.
-
 
 =0.8.0=
 Major improvements, including the ability to randomize quilts, show titles, and reuse the widgets. Also, massive changes to structure and quality of underlying code.
