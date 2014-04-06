@@ -1,5 +1,5 @@
 === Mini Quilt ===
-Contributors: davidbhayes
+Contributors: ikirudesign, davidbhayes
 Tags: sidebar, archive, colors, kaleidoscope, widget, recent posts, posts, widgets, random posts, random, plugin
 Requires at least: 2.3.0
 Tested up to: 3.8.1
