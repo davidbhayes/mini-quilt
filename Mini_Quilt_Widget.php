@@ -1,6 +1,6 @@
 <?php 
 class Mini_Quilt_Widget extends WP_Widget {
-	function Mini_Quilt_Widget() {
+	function __construct() {
 		$widget_ops = array( 
 			'classname' => 'mq', 
 			'description' => 'A unique and visually interesting way to highlight recent or random posts.' 
