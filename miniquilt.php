@@ -4,7 +4,7 @@ Plugin Name: Mini Quilt
 Plugin URI: http://www.ikirudesign.com/plugins/mini-quilt/
 Description: A unique way to show recent or random posts in your sidebar using a visually interesting quilt of your posts with colors derived by the <a href="http://www.ikirudesign.com/themes/kaleidoscope/">Kaleidoscope theme</a>'s color algorithm.
 Author: david (b) hayes
-Version: 0.8.2
+Version: 0.8.3
 Author URI: http://www.davidbhayes.com/
 License: GPL 2.0 (http://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 */
@@ -31,9 +31,12 @@ function mq_load_widgets() {
 // -=- The Class Extension to make the Widget
 class Mini_Quilt_Widget extends WP_Widget {
 	function Mini_Quilt_Widget() {
-		$widget_ops = array( 'classname' => 'mq', 'description' => 'A unique and visually interesting way to highlight recent or random posts.' ); // It's basic settings; below, it's control settings
+		$widget_ops = array( 
+			'classname' => 'mq', 
+			'description' => 'A unique and visually interesting way to highlight recent or random posts.' 
+		);
 		$control_ops = array( 'id_base' => 'mq-widget' );
-		$this->WP_Widget( 'mq-widget', 'Mini Quilt', $widget_ops, $control_ops ); //makes the widget
+		parent::__construct( 'mq-widget', 'Mini Quilt', $widget_ops, $control_ops ); //makes the widget
 	}
 	
 	function widget( $args, $instance ) {
@@ -140,7 +143,7 @@ function mq_date_to_color( $day, $year ) {
 	$green = mq_color_maker( $day, $year, 20, 240 ); //20, 240
 	$blue = mq_color_maker( $day, $year, 10, 0 ); // 10, 0
 	
-	return $rgb = "{$red}{$green}{$blue}"; //concanate the calculated colors and return them
+	return $rgb = "{$red}{$green}{$blue}";
 }
 function mq_color_maker( $day, $year, $broaden = 0, $shift = 0 ) {
 
@@ -175,11 +178,6 @@ function mq_color_maker( $day, $year, $broaden = 0, $shift = 0 ) {
 	+Change the first (and only the first) +/- to toggle fade/darken
 	*/ 
 	$calced_color = dechex(127.5*(($HBASE-($HSAFE*$hshift))+(($HSAFE-($HSAFE*$hshift))*(cos((M_PI*($pshift))/180))))); 
-	
-	if ( strlen( $calced_color ) < 2 ) { 
-	  $calced_color = '0'.$calced_color; // so add a zero if it's a single digit
-	}	
-	
-	return $calced_color;
+	$hexpart = str_pad($calced_color, 2, "00", STR_PAD_LEFT);
+	return $hexpart;
 }
-?>
