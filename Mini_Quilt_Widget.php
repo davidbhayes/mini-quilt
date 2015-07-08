@@ -10,48 +10,66 @@ class Mini_Quilt_Widget extends WP_Widget {
 	}
 	
 	function widget( $args, $instance ) {
+		echo $args['before_widget'];
+		echo $args['before_title'].$instance['widget_title'].$args['after_title']; 
+		echo self::show_widget_body($instance);
+		echo $args['after_widget'];
+	}
 
-		extract( $args );
-		$widget_title = $instance['widget_title'];
-		$rows_to_display = max( $instance['rows_to_display'], 1 ); //using max to keep safe from neg/nonint values
-		$columns_to_display = max( $instance['columns_to_display'], 1 );
-		$patch_width = $instance['patch_width'];
-		$patch_height = $instance['patch_height'];
-		$randomize = $instance['randomize'];
+	function show_widget_body($instance) {
+		$rows = max( $instance['rows_to_display'], 1 ); 
+		$columns = max( $instance['columns_to_display'], 1 );	
+		$posts_to_display = $rows * $columns;
 		$show_post_titles = $instance['show_post_titles'];
 
-		$posts_to_display = $rows_to_display * $columns_to_display;
-		$new_patch_width = max( 0, $patch_width - 10 ); //these correct for the padding which was
-		$new_patch_height = max( 0, $patch_height - 4 );// necessary to make the text look ok		
-		if ( $new_patch_height < 6 and !$show_post_titles ) { 
-			$new_patch_height = 6; 
-		}
-		$main_width = ( $new_patch_width + 14 ) * $columns_to_display;
+		$patch_width = max( 0, $instance['patch_width'] ); //these correct for the padding which was
+		$main_width_padding = 1 * 2;
+		$main_width_border = 1 * 2;
+		$main_width_correction = $main_width_padding + $main_width_border;
+		$main_width = $patch_width * $columns + $main_width_correction;
 
-		echo $before_widget;
-		echo $before_title.$widget_title.$after_title; ?>
-		  <ul class="miniquiltbox" style="width: <?php echo $main_width ?>px;">
-			<?php
-				$recentPosts = new WP_Query();
-				if ( $randomize ) {
-				  $query = 'showposts='.$posts_to_display.'&ignore_sticky_posts=1&orderby=rand';
-				}
-				else {
-				  $query = 'showposts='.$posts_to_display.'&ignore_sticky_posts=1';
-				}
-				$recentPosts->query( $query );
-			 while ( $recentPosts->have_posts() ) : 
-			 	$recentPosts->the_post(); 
-				$test_id = get_the_ID(); ?>
-				<?php if ( $show_post_titles ) { ?>
-					<li><a style="background: #<?php if (is_single($test_id)) {echo 'bbb';} else {echo mq_date_to_color(get_the_time('z'), get_the_time('Y'));}; ?>;   width: <?php echo $new_patch_width; ?>px; height: <?php if ($new_patch_height>0) {echo $new_patch_height.'px';} else {echo 'auto';} ?>;" href="<?php the_permalink() ?>" rel="bookmark" title="&#8220;<?php the_title(); ?>&#8221; from <?php the_time('d M Y'); ?>"><?php the_title(); ?></a></li>
-				<?php }
-				else { ?>
-					<li><a style="background: #<?php if (is_single($test_id)) {echo 'bbb';} else {echo mq_date_to_color(get_the_time('z'), get_the_time('Y'));}; ?>;   width: <?php echo $new_patch_width; ?>px; height: <?php echo $new_patch_height; ?>px;" href="<?php the_permalink() ?>" rel="bookmark" title="&#8220;<?php the_title(); ?>&#8221; from <?php the_time('d M Y'); ?>"></a></li>
-			<?php	}
-			 endwhile; ?>
-		  </ul>
-		<?php echo $after_widget;
+
+		$patch_height = max( 0, $instance['patch_height'] );
+		if ( !$show_post_titles ) { 
+			$patch_height = max( 6, $patch_height ); 
+		}
+		$patch_height_text = $patch_height.'px';
+		if ( $patch_height === 0 ) {
+			$patch_height_text = 'auto';	
+		}
+
+		$query = 'showposts='.$posts_to_display.'&ignore_sticky_posts=1';
+		if ( $instance['randomize'] ) {
+		  $query .= '&orderby=rand';
+		}
+		$recentPosts = new WP_Query( $query );
+		
+		echo '<ul class="miniquiltbox" style="box-sizing: border-box; width: '.$main_width.'px;">';
+		while ( $recentPosts->have_posts() ) : 
+		 	$recentPosts->the_post(); 
+			if (is_single(get_the_ID())) {
+				$background_color = 'bbb';
+			} else {
+				$background_color = mq_date_to_color(
+					get_the_time('z'),
+					get_the_time('Y')
+				);
+			}; 
+			$inline_style = "box-sizing: border-box; 
+				background: #{$background_color};
+				width: {$patch_width}px;
+				height: {$patch_height_text};";
+			?>
+			<li>
+				<a style="<?php echo $inline_style; ?>" href="<?php the_permalink() ?>" title="&rdquo;<?php the_title_attribute(); ?>&ldquo; from <?php the_time('d M Y'); ?>">
+					<?php if ( $show_post_titles ) { 
+						the_title();
+					}?>
+				</a>
+			</li>
+<?php 
+		endwhile; 
+		echo '</ul>';
 	}
 	
 	function update( $new_instance, $old_instance ) {
